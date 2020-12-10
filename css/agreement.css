@@ -1,0 +1,11 @@
+.agreement-content {
+    padding: .2rem .2rem 0;
+}
+.agreement-item-style {
+    display: flex;
+    flex-direction: column;
+}
+.agreement-item-title {
+    margin-bottom: .1rem;
+    line-height: 1.5;
+}

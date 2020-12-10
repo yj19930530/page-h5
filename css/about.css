@@ -1,0 +1,13 @@
+.about-us-content {
+    padding: 0 .3rem;
+    display: flex;
+    flex-direction: column;
+}
+.about-us-logo {
+    margin:1rem auto .5rem;
+    width: 2.4rem;
+    height: 2.4rem;
+}
+.about-us-text {
+    line-height: 1.5;
+}

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/download.css">
+    <link rel="stylesheet" href="../css/reset.css">
+    <link rel="stylesheet" href="../css/common.css">
+    <script src="../js/mobile.js"></script>
+    <title>下载App</title>
+</head>
+
+<body>
+    <div id="dowmload-container">
+        <div class="dowmload-back">
+            <img class="dowmload-title" src="../image/title.png" alt="title">
+            <img class="dowmload-back-img" src="../image/back.png" alt="back">
+        </div>
+        <div class="dowmload-bottom-box">
+            <img class="dowmload-logo" src="../image/logo.png" alt="">
+            <span class="fz-15 fw-bold mr-t-44">一对一精细化护肤咨询</span>
+            <span class="fz-15 mr-t-4">解决各种肌肤问题</span>
+            <div class="fl-cen mr-t-52 ics-btn" onclick="uploadIos()">
+                <img class="ics-btn-icon" src="../image/ios.png" alt="">
+                <span class="fz-18 mr-l-20">ios下载</span>
+            </div>
+            <div class="fl-cen mr-t-26 ics-btn" onclick="uploadAndroid()">
+                <img class="ics-btn-icon" src="../image/Android.png" alt="">
+                <span class="fz-18 mr-l-20">Android下载</span>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+    // const requestUrl = 'http://192.168.1.214:9966/erpManageSystem';
+    const requestUrl = 'https://www.chuyinxiang.net/erpManageSystem';
+    function GetRequest() {
+        var url = location.search; //获取url中"?"符后的字串  
+        var theRequest = new Object();
+        if (url.indexOf("?") != -1) {
+            var str = url.substr(1);
+            strs = str.split("&");
+            for (var i = 0; i < strs.length; i++) {
+                theRequest[strs[i].split("=")[0]] = unescape(strs[i].split("=")[1]);
+            }
+        }
+        return theRequest;
+    } // 获取 url 后面的参数
+    let channelId = '';
+    if (GetRequest().channelId) {
+        channelId = GetRequest().channelId;
+    }
+    let accessCount = requestUrl + '/channelPromote/accessCount', accessShareUrl = requestUrl + '/channelPromote/accessShareUrl'
+    let formData = {
+        channelId: channelId
+    }
+    let accessCountData = {
+        'url': accessCount + '?channelId=' + channelId,
+        'type': 'post',
+        'header': 'application/x-www-form-urlencoded',
+    }
+    let accessShareUrlData = {
+        'url': accessShareUrl + '?channelId=' + channelId,
+        'type': 'post',
+        'header': 'application/x-www-form-urlencoded',
+    }
+    let u = navigator.userAgent;
+    let isAndroid = u.indexOf('Android') > -1 || u.indexOf('Adr') > -1; //android终端
+    let isiOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); //ios终端
+    // 苹果下载
+    function uploadIos() {
+        if (!isiOS) return alert('当前设备不是ios机型 请下载安卓版本')
+        ajaxRequest(accessCountData)
+        ajaxRequest(accessShareUrlData)
+        window.location.href = 'itms-apps://itunes.apple.com/app/id1535135532'
+    }
+    // 安卓下载
+    function uploadAndroid() {
+        if (!isAndroid) return alert('当前设备不是Android机型 请下载ios版本')
+        ajaxRequest(accessCountData)
+        ajaxRequest(accessShareUrlData)
+        window.location.href = 'https://www.chuyinxiang.net/erpManageSystem/static/images/download/skin-v1.0.0.apk'
+    }
+    // 请求
+    async function ajaxRequest(json) {
+        return await new Promise((resolve, reject) => {
+            if (window.XMLHttpRequest) {
+                var ajax = new XMLHttpRequest();
+            } else {
+                var ajax = new ActiveXObject('Microsoft.XMLHTTP');
+            }
+            ajax.open(json.type, json.url, true);
+            ajax.setRequestHeader("Content-type", json.header);
+            ajax.send(JSON.stringify(json.data));
+            ajax.onreadystatechange = function () {
+                if (ajax.readyState == 4) {
+                    if (ajax.status >= 200 && ajax.status < 300 || ajax.status == 304) {
+                        let res = JSON.parse(ajax.responseText);
+                        resolve(res);
+                    } else {
+                        let rej = json.error && json.error();
+                        reject(rej)
+                    }
+                }
+            };
+        })
+    }
+</script>
+
+</html>
